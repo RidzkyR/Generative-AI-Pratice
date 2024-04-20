@@ -37,11 +37,13 @@ class ChatViewModel : ViewModel() {
     }
 
     fun switchUser() {
+        clearSmartReplyOption()
         val value = _pretendingAsAnotherUser.value!!
         _pretendingAsAnotherUser.value = !value
     }
 
     fun setMessages(messages: ArrayList<Message>) {
+        clearSmartReplyOption()
         _chatHistory.value = messages
     }
 
@@ -50,6 +52,8 @@ class ChatViewModel : ViewModel() {
 
         var list: ArrayList<Message> = chatHistory.value ?: ArrayList()
         list.add(Message(message, !user, System.currentTimeMillis()))
+
+        clearSmartReplyOption()
 
         _chatHistory.value = list
     }
@@ -124,6 +128,10 @@ class ChatViewModel : ViewModel() {
             .addOnFailureListener { e ->
                 _errorMessage.value = "An error has occurred on Smart Reply Instance"
             }
+    }
+
+    private fun clearSmartReplyOption() {
+        _smartReplyOptions.value = ArrayList()
     }
 
     override fun onCleared() {

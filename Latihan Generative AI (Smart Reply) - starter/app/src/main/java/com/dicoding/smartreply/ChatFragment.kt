@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.smartreply.databinding.FragmentChatBinding
+import java.util.Calendar
 
 class ChatFragment : Fragment() {
 
@@ -69,6 +70,13 @@ class ChatFragment : Fragment() {
         binding.rvSmartReplyOptions.adapter = replyOptionsAdapter
 
         chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
+
+        // menampilkan chat awal
+        if (chatViewModel.chatHistory.value == null){
+            val chatHistory = ArrayList<Message>()
+            chatHistory.add(Message("Hello friend. How are you today?", false, System.currentTimeMillis()))
+            chatViewModel.setMessages(chatHistory)
+        }
 
         chatViewModel.chatHistory.observe(viewLifecycleOwner) { messages ->
             chatAdapter.setChatHistory(messages)
@@ -169,12 +177,38 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun generateBasicChatHistory() {
+    //manmpilkan template pesan biasa
+    private fun generateBasicChatHistory(){
+
+        val chatHistory = ArrayList<Message>()
+        val calendar = Calendar.getInstance() // Get the current time
+
+        calendar.add(Calendar.MINUTE, -10)
+        chatHistory.add(Message("Hello", true, calendar.timeInMillis))
+
+        calendar.add(Calendar.MINUTE, 10)
+        chatHistory.add(Message("Hey", false, calendar.timeInMillis))
+
+        chatViewModel.setMessages(chatHistory)
 
     }
 
+    //manmpilkan template pesan sensitif
     private fun generateSensitiveChatHistory() {
 
-    }
+        val chatHistory = ArrayList<Message>()
+        val calendar = Calendar.getInstance()
 
+        calendar.add(Calendar.MINUTE, -10)
+        chatHistory.add(Message("Hi", false, calendar.timeInMillis))
+
+        calendar.add(Calendar.MINUTE, 1)
+        chatHistory.add(Message("How are you?", true, calendar.timeInMillis))
+
+        calendar.add(Calendar.MINUTE, 10)
+        chatHistory.add(Message("My cat died", false, calendar.timeInMillis))
+
+        chatViewModel.setMessages(chatHistory)
+
+    }
 }
