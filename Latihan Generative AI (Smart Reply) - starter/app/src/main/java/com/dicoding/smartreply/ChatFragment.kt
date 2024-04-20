@@ -77,6 +77,11 @@ class ChatFragment : Fragment() {
             }
         }
 
+        //observe smartReply
+        chatViewModel.smartReplyOptions.observe(viewLifecycleOwner) { options ->
+            replyOptionsAdapter.setReplyOptions(options)
+        }
+
         chatViewModel.pretendingAsAnotherUser.observe(viewLifecycleOwner) { isPretendingAsAnotherUser ->
             if (isPretendingAsAnotherUser) {
                 binding.tvCurrentUser.text = requireContext().getText(R.string.chatting_as_evans)

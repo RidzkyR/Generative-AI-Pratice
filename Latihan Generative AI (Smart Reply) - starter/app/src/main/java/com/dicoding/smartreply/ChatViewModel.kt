@@ -1,6 +1,7 @@
 package com.dicoding.smartreply
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.Task
@@ -27,7 +28,11 @@ class ChatViewModel : ViewModel() {
     // inisialisasi smartReply
     private val smartReply: SmartReplyGenerator = SmartReply.getClient()
 
+    private val _smartReplyOptions = MediatorLiveData<List<SmartReplySuggestion>>()
+    val smartReplyOptions: LiveData<List<SmartReplySuggestion>> = _smartReplyOptions
+
     init {
+        initSmartReplyOptionsGenerator()
         _pretendingAsAnotherUser.value = false
     }
 
@@ -47,6 +52,40 @@ class ChatViewModel : ViewModel() {
         list.add(Message(message, !user, System.currentTimeMillis()))
 
         _chatHistory.value = list
+    }
+
+    // memanggil metode generateSmartReplyOptions jika aplikasi mendeteksi pesan baru ataupun pergantian pengguna aplikasi
+    private fun initSmartReplyOptionsGenerator(){
+        _smartReplyOptions.addSource(pretendingAsAnotherUser){ isPretendingAsAnotherUser ->
+            val list = chatHistory.value
+
+            if (list.isNullOrEmpty()) {
+                return@addSource
+            } else {
+                generateSmartReplyOptions(list, isPretendingAsAnotherUser)
+                    .addOnSuccessListener { result ->
+                        _smartReplyOptions.value = result
+                    }
+            }
+
+
+        }
+
+        _smartReplyOptions.addSource(chatHistory){ conversations ->
+            val isPretendingAsAnotherUser = pretendingAsAnotherUser.value
+
+
+            if (isPretendingAsAnotherUser != null && conversations.isNullOrEmpty()){
+                return@addSource
+            }else{
+                generateSmartReplyOptions(conversations, isPretendingAsAnotherUser!!)
+                    .addOnSuccessListener { result ->
+                        _smartReplyOptions.value = result
+                    }
+
+            }
+
+        }
     }
 
     private fun generateSmartReplyOptions(messages: List<Message>, isPretendingAsAnotherUser: Boolean) : Task<List<SmartReplySuggestion>>{
