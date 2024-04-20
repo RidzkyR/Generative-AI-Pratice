@@ -1,5 +1,6 @@
 package com.dicoding.smartreply
 
+import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,15 @@ class ChatViewModel : ViewModel() {
 
     fun setMessages(messages: ArrayList<Message>) {
         _chatHistory.value = messages
+    }
+
+    fun addMessage(message: String) {
+        val user = _pretendingAsAnotherUser.value!!
+
+        var list: ArrayList<Message> = chatHistory.value ?: ArrayList()
+        list.add(Message(message, !user, System.currentTimeMillis()))
+
+        _chatHistory.value = list
     }
 
     companion object {
