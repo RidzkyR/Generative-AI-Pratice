@@ -4,10 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.smartreply.databinding.ItemOptionsSmartreplyBinding
+import com.google.mlkit.nl.smartreply.SmartReplySuggestion
 
 class ReplyOptionsAdapter(
     private val onItemClickCallback: OnItemClickCallback
 ) : RecyclerView.Adapter<ReplyOptionsAdapter.ViewHolder>() {
+
+    //inisialisasi smartReply Options
+    private val smartReplyOptions = ArrayList<SmartReplySuggestion>()
 
     interface OnItemClickCallback {
         fun onOptionClicked(optionText: String)
@@ -27,11 +31,22 @@ class ReplyOptionsAdapter(
     }
 
     override fun onBindViewHolder(holder: ReplyOptionsAdapter.ViewHolder, position: Int) {
-
+        //menampilkan opsi jawaban
+        val optionText = smartReplyOptions[position].text
+        holder.binding.tvSmartReplyOption.text = optionText
+        holder.itemView.setOnClickListener{
+            onItemClickCallback.onOptionClicked(optionText)
+        }
     }
 
     override fun getItemCount(): Int {
-        return 0
+        return smartReplyOptions.size
+    }
+
+    fun setReplyOptions(smartReplyOptions: List<SmartReplySuggestion>){
+        this.smartReplyOptions.clear()
+        this.smartReplyOptions.addAll(smartReplyOptions)
+        notifyDataSetChanged()
     }
 
 }
