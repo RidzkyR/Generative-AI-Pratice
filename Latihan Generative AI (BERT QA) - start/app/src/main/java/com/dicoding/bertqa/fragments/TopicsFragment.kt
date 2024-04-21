@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.bertqa.DataSetClient
 import com.dicoding.bertqa.R
 import com.dicoding.bertqa.adapters.TopicsAdapter
 import com.dicoding.bertqa.databinding.FragmentTopicsBinding
@@ -22,7 +23,7 @@ class TopicsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentTopicsBinding.inflate(inflater, container, false)
@@ -31,6 +32,19 @@ class TopicsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //menampilkan daftar topik dari file JSON
+        val dataSetClient = DataSetClient(requireActivity())
+        dataSetClient.loadJsonData()?.let {
+            topicsTitle = it.getTitles()
+        }
+        //menyambungkan adapternya
+        val topicsAdapter = TopicsAdapter(topicsTitle, object : TopicsAdapter.OnItemSelected {
+            override fun onItemClicked(itemID: Int, itemTitle: String) {
+                startQaScreen(itemID, itemTitle)
+            }
+
+        })
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         val decoration = DividerItemDecoration(
