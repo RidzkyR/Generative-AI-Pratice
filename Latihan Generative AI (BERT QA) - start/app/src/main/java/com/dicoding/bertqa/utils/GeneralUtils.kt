@@ -11,7 +11,7 @@ fun getProfileIcon(context: Context, isLocalUser: Boolean): Drawable {
     val drawable =
         ContextCompat.getDrawable(context, R.drawable.ic_tag_faces_black_24dp)
             ?: throw IllegalStateException("Could not get user profile image")
-
+    // membuat mutable lalu merubah warnanya
     if (isLocalUser) {
         DrawableCompat.setTint(drawable.mutate(), Color.BLUE)
     } else {

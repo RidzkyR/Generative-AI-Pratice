@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.io.InputStream
 
+// untuk parsing data dari berkas JSON
 class DataSetClient(private val context: Context) {
 
     private companion object {

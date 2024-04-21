@@ -2,6 +2,7 @@ package com.dicoding.bertqa.models
 
 import com.google.gson.annotations.SerializedName
 
+// menyimpan data dari file JSON
 data class Topics(
     @SerializedName("titles")
     private val titles: List<List<String>>,
