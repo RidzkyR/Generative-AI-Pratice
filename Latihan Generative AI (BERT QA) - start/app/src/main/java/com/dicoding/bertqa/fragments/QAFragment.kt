@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.bertqa.DataSetClient
 import com.dicoding.bertqa.R
 import com.dicoding.bertqa.adapters.ChatHistoryAdapter
 import com.dicoding.bertqa.adapters.QuestionSuggestionsAdapter
 import com.dicoding.bertqa.databinding.FragmentQABinding
+import com.dicoding.bertqa.models.Message
 
 class QAFragment : Fragment() {
 
@@ -43,6 +45,12 @@ class QAFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title =
             String.format(getString(R.string.fragment_qa_title), args.topicTitle)
+
+        //inisilisasi DataSetClient
+        val client = DataSetClient(requireActivity())
+        client.loadJsonData()?.let {
+            topicContent = it.getContents()[args.topicID]
+        }
 
         initChatHistoryRecyclerView()
         initQuestionSuggestionsRecyclerView()
@@ -72,6 +80,7 @@ class QAFragment : Fragment() {
                     val question = this.text.toString()
                     this.text?.clear()
 
+                    chatAdapter.addMessage(Message(question,true))
                 }
             } else {
                 Toast.makeText(
@@ -101,6 +110,8 @@ class QAFragment : Fragment() {
 
         chatAdapter = ChatHistoryAdapter()
         binding.rvChatHistory.adapter = chatAdapter
+
+        chatAdapter.addMessage(Message(topicContent,false))
 
     }
 
