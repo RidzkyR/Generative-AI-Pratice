@@ -54,6 +54,7 @@ class QAFragment : Fragment() {
         val client = DataSetClient(requireActivity())
         client.loadJsonData()?.let {
             topicContent = it.getContents()[args.topicID]
+            topicSuggestedQuestions = it.questions[args.topicID]
         }
 
         initChatHistoryRecyclerView()
@@ -135,7 +136,7 @@ class QAFragment : Fragment() {
                     topicSuggestedQuestions,
                     object : QuestionSuggestionsAdapter.OnOptionClicked {
                         override fun onOptionClicked(optionID: Int) {
-
+                            setQuestion(optionID)
                         }
 
                     })
@@ -172,6 +173,12 @@ class QAFragment : Fragment() {
 
         })
 
+    }
+
+    private fun setQuestion(position: Int) {
+        binding.tietQuestion.setText(
+            topicSuggestedQuestions[position]
+        )
     }
 
     override fun onDestroyView() {
